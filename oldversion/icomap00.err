@@ -1,0 +1,52 @@
+/* file: icomap00.c */
+
+#include "icomap00.h"
+
+  p3=base/2.0e0;p4=-height/3.0e0;
+  p5=base/4.0e0;p6=height/6.0e0;
+  /* draw outline */ plotoutline(base,p1,p2,p3,p4,p5,p6);
+  /* draw boundaries inside outline */ plotbounds(base,p1,p2,p3,p4,p5,p6);
+  while(TRUE) { writemsg(6,122);prefac=0;
+    /* read record with 7 points, EOF? */
+    readrecord();for(i=0;i<7;++i) {
+      /* test for (0,180), end of island? */
+      if((abs(lat(i))<=1.0e-4)&&((abs(lon(i)-180.0e0))<=1.0e-4)) {
+        /* housekeep new island marker */ nexfac=0;continue; }
+      /* take radian measure */
+      lon(i)=180.0e0-lon(i);lon(i)=rad(lon(i));lat(i)=rad(lat(i));
+      /* housekeep new island marker */
+      if(nexfac==1) nexfac=2; else if(nexfac==0) nexfac=1;
+
+      /* find triangle the point belongs in */
+      hold=100.0;prefac=face;for(ffff=0;ffff<20;++ffff) {
+        coord=dist(lat(i),lon(i),fcoord(ffff,1),fcoord(ffff,2))
+        if(hold>coord) { face=ffff;hold=coord; }
+      /* check whether belongs in 21, 22 (other halves of 5, 17) */
+      if(face.eq.17.and.dist(lat(i),lon(i),vcoord(4,1),vcoord(4,2)).lt.
+     *  dist(lat(i),lon(i),vcoord(9,1),vcoord(9,2))) face=22;
+      if(face.eq.5.and.dist(lat(i),lon(i),vcoord(4,1),vcoord(4,2)).gt.
+     *  dist(lat(i),lon(i),vcoord(12,1),vcoord(12,2)).and.
+     *  dist(lat(i),lon(i),vcoord(4,1),vcoord(4,2)).gt.
+     *  dist(lat(i),lon(i),vcoord(2,1),vcoord(2,2))) face=21;
+      if(face!=prefac) nexfac=1;
+      /* apply step 1, part 1 formula */
+      x1=-cos(lat(i))*sin(lon(i)-fcoord(face,2))/
+     *    sin(lat(i))*sin(fcoord(face,1))+
+     *    cos(lat(i))*cos(fcoord(face,1))*
+     *    cos(lon(i)-fcoord(face,2)))
+      y1=( sin(lat(i))*cos(fcoord(face,1))-
+     *     cos(lat(i))*sin(fcoord(face,1))*cos(lon(i)-fcoord(face,2)))/
+     *   ( sin(lat(i))*sin(fcoord(face,1))+
+     *     cos(lat(i))*cos(fcoord(face,1))*cos(lon(i)-fcoord(face,2)))
+      /* apply step 1, part 2 formula */
+      x2= trm3(face)*x1+trm4(face)*y1;y2=-trm4(face)*x1+trm3(face)*y1;
+      /* apply step 2, part 1 formula */
+      x3= trm1(face)*x2+trm2(face)*y2;y3=-trm2(face)*x2+trm1(face)*y2;
+      /* apply step 2, part 2 formula */
+      x4=x3+transx(face);y4=y3+transy(face);
+      /* apply scaling factor */
+      llat=y4*factor;llon=x4*factor;
+      /* plot point */
+      ii=4-nexfac;plotpoint(llon,llat,ii) } /* end of 7 points? if yes: */ }
+  /* close plot, write summaries (none here now) */
+  closeplot(0.0,0.0,999); }

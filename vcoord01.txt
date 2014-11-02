@@ -1,0 +1,35 @@
+ 1.  China                  E 122.30000000d
+                            N  39.10000000d
+
+ 2.  Norway                 E  10.53619898d
+                            N  64.70000000d
+
+ 3.  Arabian Sea            E  58.15770555d
+                            N  10.44734504d
+
+ 4.  Liberia                W   5.24539058d
+                            N   2.30088201d
+
+ 5.  Puerto Rico            W  67.13232659d
+                            N  23.71792533d
+
+ 6.  Alaska                 W 143.47849033d
+                            N  50.10320164d
+
+ 7.  Buenos Aires           W  57.70000000d
+                            S  39.10000000d
+
+ 8.  Antarctica             W 169.46380102d
+                            S 64.700000000d
+
+ 9.  Pitcairn Island        W 121.84229445d
+                            S  10.44734504d
+
+10.  Gilbert Islands        E 174.75460942d
+                            S   2.30088201d
+
+11.  Australia              E 112.86767341d
+                            S  23.71792533d
+
+12.  Prince Edward Island   E  36.52150967d
+                            S  50.10320164d

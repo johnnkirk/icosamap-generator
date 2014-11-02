@@ -1,0 +1,322 @@
+/* file: maputl03.c */
+
+#include "icomap03.h"
+
+int readparms(ico) ICOPARMS *ico; { /* read parameters */ VERTINDEX v1,v2,v3;
+  EDGEINDEX edgeno;EDGE *thisedge;FACEINDEX faceno;FACE *thisface;
+  POINTINDEX p0,p1,p2,p3;
+  if(!readddverts("vcoord01.doc",ico)) {
+    printf("***** readparms err *****\n");return FALSE; }
+  for(edgeno=0;edgeno<EDGES;++edgeno) {
+    thisedge=&((ico->edge)[edgeno]);p0=thisedge->pointno;
+    v1=(thisedge->adjvert)[0];p1=(ico->vertex)[v1].pointno;
+    v2=(thisedge->adjvert)[1];p2=(ico->vertex)[v2].pointno;
+    printf("edge: %2d, pnt: %2d",edgeno,p0);
+    printf(", v1: %2d, p1: %2d, v2: %2d, p2: %2d\n",v1,p1,v2,p2);
+    segctr(&((ico->point)[p1]),&((ico->point)[p2]),&((ico->point)[p0])); }
+  for(faceno=0;faceno<FACES;++faceno) {
+    thisface=&((ico->face)[faceno]);p0=thisface->pointno;
+    v1=(thisface->adjvert)[0];p1=(ico->vertex)[v1].pointno;
+    v2=(thisface->adjvert)[1];p2=(ico->vertex)[v2].pointno;
+    v3=(thisface->adjvert)[2];p3=(ico->vertex)[v3].pointno;
+    printf("face: %2d, pnt: %2d",faceno,p0);
+    printf(", v1: %2d, p1: %2d, v2: %2d, p2: %2d, v3: %2d, p3: %2d\n",
+           v1,p1,v2,p2,v3,p3);
+    trictr(&((ico->point)[p1]),&((ico->point)[p2]),&((ico->point)[p3]),
+           &((ico->point)[p0])); }
+/*  read(1,102) (i,trm3(i),trm4(i),ii=1,22);
+  read(2,102) (i,trm1(i),trm2(i),ii=1,22); */
+  return TRUE; }
+
+/* function to take the radian measure of any angle expressed in degrees */
+double rad(coord) float coord; { return coord*(PI/180.0); }
+
+GEOG *carttogeog(destin,source) GEOG *destin;CART *source; {
+  (destin->lat)=asin(source->z);
+  (destin->lon)=atan((source->x)/(source->y))+
+                (((source->y)>=0)?0:(((source->x)>=0)?PI:(-PI)));
+  return destin; }
+
+CART *geogtocart(destin,source) CART *destin;GEOG *source; {
+  (destin->x)=cos(source->lat)*sin(source->lon);
+  (destin->y)=cos(source->lat)*cos(source->lon);
+  (destin->z)=sin(source->lat);return destin; }
+
+GEOG *segctr(p1,p2,ctr) GEOG *p1,*p2,*ctr; {
+  CART cartp1,cartp2,cartctr;double len;
+  geogtocart(&cartp1,p1);geogtocart(&cartp2,p2);
+  (cartctr.x)=((cartp1.x)+(cartp2.x))/2.0;
+  (cartctr.y)=((cartp1.y)+(cartp2.y))/2.0;
+  (cartctr.z)=((cartp1.z)+(cartp2.z))/2.0;
+  len=sqrt((cartctr.x)*(cartctr.x)+
+           (cartctr.y)*(cartctr.y)+
+           (cartctr.z)*(cartctr.z));
+  (cartctr.x)/=len;(cartctr.y)/=len;(cartctr.z)/=len;
+  return carttogeog(ctr,&cartctr);  }
+
+GEOG *trictr(p1,p2,p3,ctr) GEOG *p1,*p2,*p3,*ctr; {
+  CART cartp1,cartp2,cartp3,cartctr;double len;
+  geogtocart(&cartp1,p1);geogtocart(&cartp2,p2);geogtocart(&cartp3,p3);
+  (cartctr.x)=((cartp1.x)+(cartp2.x)+(cartp3.x))/3.0;
+  (cartctr.y)=((cartp1.y)+(cartp2.y)+(cartp3.y))/3.0;
+  (cartctr.z)=((cartp1.z)+(cartp2.z)+(cartp3.z))/3.0;
+  len=sqrt((cartctr.x)*(cartctr.x)+
+           (cartctr.y)*(cartctr.y)+
+           (cartctr.z)*(cartctr.z));
+  (cartctr.x)/=len;(cartctr.y)/=len;(cartctr.z)/=len;
+  return carttogeog(ctr,&cartctr);  }
+
+/* function to compute the angular great circle distance between two points */
+double geogdist(p1,p2) GEOG *p1,*p2; { return acos(
+  cos(p1->lat)*cos(p2->lat)*cos((p2->lon)-(p1->lon))+
+  sin(p1->lat)*sin(p2->lat)); }
+
+/* function to compute the angular great circle distance between two points */
+double distll(lat1,lon1,lat2,lon2) double lat1,lon1,lat2,lon2; {
+  return acos(cos(lat1)*cos(lat2)*cos(lon2-lon1)+sin(lat1)*sin(lat2)); }
+
+int readddverts(fname,ico) char *fname;ICOPARMS *ico; {
+  char *punct=". \t\r\n";char *whspc=punct+1;
+  FILE *ifile;char iline[1024];int ret,len,vert;double deg,lat,lon;
+  char *loc,*pos,ch;
+  if(!(ifile=fopen(fname,"r"))) {
+    printf("***** error opening %s *****\n",fname);return FALSE; }
+  for(vert=0;vert<12;++vert) {
+    /* read longitude record */
+    if((loc=fgets(iline,1024,ifile))==NULL) { printf("***** error reading");
+      printf(" vertex %d longitude line from file: %s *****\n",vert,fname);
+      return FALSE; }
+/*    printf("reading vert %d.  (from %s)\n",vert,fname);printf(">>%s",iline);
+    getch();    */
+
+    /* parse and check vertex number */
+    /* skip whitespace, take substring to punct, check against vert */
+    loc=iline;if((ret=strtol(iline,&loc,10)-1)!=vert) {
+      printf("***** error in");
+      printf("vertex number %d (found: %d) *****\n",vert,ret);return FALSE; }
+/*    printf("saw vert %d\n",ret);
+    getch();     */
+
+    /* parse and alloc memory for vertex label */
+    loc+=(len=strspn(loc,punct));loc[22]='\0';
+/*    printf("label %d: >>%s<<\n",ret,loc);        */
+    pos=(ico->vertex)[vert].label=malloc(len=strlen(strip(loc)));*pos='\0';
+    strncpy(pos,loc,22);loc+=23;
+/*    getch();     */
+
+    /* get lon quadrant id */
+    loc+=(len=strspn(loc,whspc));ch=tolower(*loc);
+/*    printf("lon E/W loc: %d (%c)\n",loc-iline,ch);   */
+
+    /* parse lon degrees */
+    deg=strtod(++loc,&pos);if(tolower(*pos)!='d') {
+      printf("***** vert %d lon deg err (%c) *****\n",vert,*pos);
+      return(FALSE); }
+/*    getch();        */
+
+    /* accomodate lon quadrant id */
+    lon=rad(deg);if(ch=='w') lon=(-lon); else
+    if(ch!='e') { printf("***** vert %d lon E/W err (%c) *****",vert,ch);
+      return FALSE; }
+/*    getch();         */
+
+    /* read latitude record */
+    if((loc=fgets(iline,1024,ifile))==NULL) { printf("***** error reading");
+      printf(" vertex %d latitude line from file: %s *****\n",vert,fname);
+      return FALSE; }
+/*    getch();        */
+
+    /* get lat quadrant id */
+    loc=iline+(len=strspn(iline,whspc));ch=tolower(*loc);
+
+    /* parse lat degrees */
+    deg=strtod(++loc,&pos);if(tolower(*pos)!='d') {
+      printf("***** vert %d lat deg err (%c) *****\n",vert,*pos);
+      return(FALSE); }
+/*    getch();          */
+
+    /* accomodate lat quadrant id */
+    lat=rad(deg);if(ch=='s') lat=(-lat); else
+    if(ch!='n') { printf("***** vert %d lat N/S err (%c) *****",vert,ch);
+      return FALSE; }
+/*    getch();          */
+
+    /* put away results and read spacer line */
+    (ico->point)[(ico->vertex)[vert].pointno].lat=lat;
+    (ico->point)[(ico->vertex)[vert].pointno].lon=lon;
+    if(((loc=fgets(iline,1024,ifile))==NULL)&&(vert<11)) {
+      printf("***** error reading blank spacer line after");
+      printf(" vertex %d from file: %s *****\n",vert,fname);return FALSE; }
+/*    getch();           */ }
+  return TRUE; }
+
+/* determine which icosahedral face a lat-lon point lies in */
+FACEINDEX whichface(ico,geog) ICOPARMS *ico;GEOG *geog; {
+  FACEINDEX face,prefac,ffff;double hold,coord,lat,lon,fa,fo;
+  lat=(geog->lat);lon=(geog->lon);
+
+  /* find triangle the point belongs in */
+  hold=100.0;prefac=face;for(ffff=0;ffff<20;++ffff) {
+/*  coord=distll(lat,lon,ico->fcoord][0],ico->fcoord[ffff][1]);   */
+    if(hold>coord) { face=ffff;hold=coord; } }
+
+  /* check whether belongs in 20, 21 (other halves of 4, 16) */
+/*if((face==16)&&
+     (distll(lat,lon,ico->vcoord[ 3][0],ico->vcoord[ 3][1])<
+      distll(lat,lon,ico->vcoord[ 8][0],ico->vcoord[ 8][1]))) face=21; else
+  if((face== 4)&&
+     (distll(lat,lon,ico->vcoord[ 3][0],ico->vcoord[ 3][1])>
+      distll(lat,lon,ico->vcoord[11][0],ico->vcoord[11][1]))&&
+     (distll(lat,lon,ico->vcoord[ 3][0],ico->vcoord[ 3][1])>
+      distll(lat,lon,ico->vcoord[ 1][0],ico->vcoord[ 1][1]))) face=20;   */
+  return face; }
+
+/* the icosahedral projection */
+FACEINDEX icoproj0(ico,geog,mapp) ICOPARMS *ico;GEOG *geog;MAPP *mapp; {
+  FACEINDEX face;double fa,fo,x0,y0,x1,y1,x2,y2,x3,y3,trm3,trm4,trm1,trm2,tx,ty;
+  face=whichface(ico,geog);x0=(geog->lat);y0=(geog->lon);
+/*  fa=(ico->fcoord[face][0]);fo=(ico->fcoord[face][1]);   */
+  trm3=(ico->rotterm3[face]);trm4=(ico->rotterm4[face]);
+  trm1=(ico->rotterm1[face]);trm2=(ico->rotterm2[face]);
+  tx=(ico->ytranslate[face]);ty=(ico->ytranslate[face]);
+
+  /* apply step 1, part 1 formula */
+  /* project spherical coordinates to plane of triangle */
+  x1=(-cos(x0)*sin(y0)-fo/(sin(x0)*sin(fa)))+(cos(x0)*cos(fa)*cos(y0-fo));
+  y1=(sin(x0)*cos(fa)-cos(x0)*sin(fa)*cos(y0-fo))/
+     (sin(x0)*sin(fa)+cos(x0)*cos(fa)*cos(y0-fo));
+
+  /* apply step 1, part 2 formula */
+  /* rotate to standard triangle orientation */
+  x2=trm3*x1+trm4*y1;y2=(-trm4*x1)+trm3*y1;
+
+  /* apply step 2, parts 1 and 2 formula */
+  /* rotate and translate triangle to its map orientation and location */
+  (mapp->x)=(trm1*x2+trm2*y2)+tx;(mapp->y)=((-trm2*x2)+trm1*y2)+ty;
+  return face; }
+
+int writemsg(unit,format) int unit,format; { }
+
+char *strip(str) char *str; { char *whspc=" \t\r\n";char *pos,ch,*loc;
+  for(pos=str+strlen(str)-1;pos>=str;--pos) {
+    for(ch=*pos,loc=whspc;*loc!='\0';++loc) if(*loc==ch) break;
+    if(*loc=='\0') { pos[1]='\0';break; } } return str; }
+
+int initplot() { int ret;int gdr,lomode,himode,gmode;/* initialize plot */
+  gdr=0;initgraph(&gdr,&gmode,"c:\\borland\\turboc\\lib");
+  if((ret=graphresult())<0) {
+    printf("initgraph error: #%s.\n",grapherrormsg(ret));return FALSE; }
+  getmoderange(gdr,&lomode,&himode);
+/*  closegraph();
+  printf("ret: %d, lo: %d, hi: %d\n",gdr,lomode,himode);
+  getch();
+  getgraphmode();
+  setgraphmode();  bar(0,0,getmaxx()/2,getmaxy());  */
+/* set pen at paper corner (origin)
+  call plot(10.0*SCALE,-11.0*SCALE,3)
+  call plot(10.0*SCALE,-5.0*SCALE,-3)     */ }
+
+int closeplot() { closegraph(); }
+
+int plot(x,y,penpos) float x,y;int penpos; { return plotpoint(x,y,penpos); }
+
+int plotpoint(fx,fy,penpos) float fx,fy;int penpos; { int x,y;
+  switch(penpos) { case 1: break;
+    case 2: lineto((x=fx),(y=fy));break;
+    case 3: moveto((x=fx),(y=fy));break; default: break; } }
+
+int readrecord() { /* read one record containing 7 points of data */ }
+
+int readdmsverts(fname,ico) char *fname;ICOPARMS *ico; {
+  char *punct=". \t\r\n";char *whspc=punct+1;
+  FILE *ifile;char iline[1024];int ret,len,vert,deg,min;double sec,lat,lon;
+  char *loc,*pos,ch;
+  if(!(ifile=fopen(fname,"r"))) {
+    printf("***** error opening %s *****\n",fname);return FALSE; }
+  for(vert=0;vert<12;++vert) {
+    /* read latitude record */
+    if((loc=fgets(iline,1024,ifile))==NULL) { printf("***** error reading");
+      printf(" vertex %d latitude line from file: %s *****\n",vert,fname);
+      return FALSE; }
+/*    printf("reading vert %d.  (from %s)\n",vert,fname);printf(">>%s",iline);
+    getch();    */
+
+    /* parse and check vertex number */
+    /* skip whitespace, take substring to punct, check against vert */
+    loc=iline;if((ret=strtol(iline,&loc,10)-1)!=vert) {
+      printf("***** error in");
+      printf("vertex number %d (found: %d) *****\n",vert,ret);return FALSE; }
+/*    printf("saw vert %d\n",ret);
+    getch();     */
+
+    /* parse and alloc memory for vertex label */
+    loc+=(len=strspn(loc,punct));loc[24]='\0';
+/*    printf(">>%s<<\n",loc);            */
+    pos=(ico->vertex)[vert].label=malloc(len=strlen(strip(loc)));*pos='\0';
+    strncpy(pos,loc,25);loc+=25;
+/*    getch();     */
+
+    /* parse lat degrees */
+    deg=strtol(loc,&pos,10);if(tolower(*pos)!='d') {
+      printf("***** vert %d lat deg err (%c) *****\n",vert,*pos);
+      return(FALSE); } ++pos;
+/*    getch();      */
+
+    /* parse lat minutes */
+    min=strtol(pos,&loc,10);if(tolower(*loc)!='m') {
+      printf("***** vert %d lat min err (%c) *****\n",vert,*loc);
+      return(FALSE); } ++loc;
+/*    getch();       */
+
+    /* parse lat seconds */
+    sec=strtod(loc,&pos);if(tolower(*pos)!='s') {
+      printf("***** vert %d lat sec err (%c) *****\n",vert,*pos);
+      return(FALSE); } ++pos;
+/*    getch();        */
+
+    /* parse and accomodate lat quadrant id */
+    lat=rad(deg+min/60.0+sec/3600.0);
+    pos+=(len=strspn(pos,whspc));if((ch=tolower(*pos))=='s') lat=(-lat); else
+    if(ch!='n') { printf("***** vert %d lat N/S err (%c) *****",vert,ch);
+      return FALSE; }
+/*    getch();         */
+
+    /* read longitude record */
+    if((loc=fgets(iline,1024,ifile))==NULL) { printf("***** error reading");
+      printf(" vertex %d longitude line from file: %s *****\n",vert,fname);
+      return FALSE; }
+/*    getch();        */
+
+    /* parse and accumulate lon degrees */
+    deg=strtol(iline,&pos,10);if(tolower(*pos)!='d') {
+      printf("***** vert %d lon deg err (%c) *****\n",vert,*pos);
+      return(FALSE); } ++pos;
+/*    getch();         */
+
+    /* parse and accumulate lon minutes */
+    min=strtol(pos,&loc,10);if(tolower(*loc)!='m') {
+      printf("***** vert %d lon min err (%c) *****\n",vert,*loc);
+      return(FALSE); } ++loc;
+/*    getch();         */
+
+    /* parse and accumulate lon seconds */
+    sec=strtod(loc,&pos);if(tolower(*pos)!='s') {
+      printf("***** vert %d lon sec err (%c) *****\n",vert,*pos);
+      return(FALSE); } ++pos;
+/*    getch();          */
+
+    /* parse and accomodate lon quadrant id */
+    lon=rad(deg+min/60.0+sec/3600.0);
+    pos+=(len=strspn(pos,whspc));if((ch=tolower(*pos))=='w') lon=(-lon); else
+    if(ch!='e') { printf("***** vert %d lon E/W err (%c) *****",vert,ch);
+      return FALSE; }
+/*    getch();          */
+
+    /* put away results and read spacer line */
+    (ico->point)[(ico->vertex)[vert].pointno].lat=lat;
+    (ico->point)[(ico->vertex)[vert].pointno].lon=lon;
+    if(((loc=fgets(iline,1024,ifile))==NULL)&&(vert<11)) {
+      printf("***** error reading blank spacer line after");
+      printf(" vertex %d from file: %s *****\n",vert,fname);return FALSE; }
+/*    getch();           */ }
+  return TRUE; }

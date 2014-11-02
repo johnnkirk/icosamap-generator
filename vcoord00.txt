@@ -1,0 +1,35 @@
+ 1.  China                     39d 32m 20.6s N
+                              121d 30m 19.8s E
+
+ 2.  Norway                    64d 45m  0.0s N
+                                8d 30m  0.0s E
+
+ 3.  Arabian Sea               10d 50m 58.5s N
+                               57d  6m 56.6s E
+
+ 4.  Liberia                    2d 39m  1.4s N
+                                6d 11m 55.6s W
+
+ 5.  Puerto Rico               23d 14m 45.4s N
+                               68d 11m 17.5s W
+
+ 6.  Alaska                    49d 50m  7.6s N
+                              143d 56m 56.3s W
+
+ 7.  Argentina                 39d 32m 20.6s S
+                               58d 29m 40.2s W
+
+ 8.  Antarctica                64d 45m  0.0s S
+                              171d 30m  0.0s W
+
+ 9.  Pitcairn Island           10d 50m 58.5s S
+                              122d 53m  3.4s W
+
+10.  Gilbert Islands            2d 39m  1.4s S
+                              173d 48m  4.4s E
+
+11.  Australia                 23d 14m 45.4s S
+                              111d 48m  4.4s E
+
+12.  Prince Edward Island      49d 50m  7.6s S
+                               36d  3m  3.7s E

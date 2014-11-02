@@ -1,0 +1,261 @@
+% file:  notes.lat            --   derived from worksearch/johnyoung/30jun14invoice.lat
+
+\setlength{\voffset}{0mm}
+% {17.5mm}
+\setlength{\hoffset}{0mm}
+
+\documentclass[letterpaper]{article}
+% \documentclass[12pt]{article}
+% \usepackage{ifthen}
+\usepackage{fancyhdr}
+
+\pagenumbering{arabic}
+% \nofiles
+
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-2.9in}
+
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{20pt}
+\setlength{\headsep}{1in}
+% \setlength{\topskip}{0pt}
+
+\setlength{\textheight}{7.5in}
+% \setlength{\textheight}{\paperheight}
+% \addtolength{\textheight}{-2in}
+
+\setlength{\oddsidemargin}{0.5in}
+\setlength{\evensidemargin}{0pt}
+\setlength{\marginparwidth}{1in}
+\setlength{\marginparsep}{0pt}
+
+\setlength{\footskip}{30pt}
+\setlength{\parskip}{10pt}
+\setlength{\parindent}{0pt}
+
+% these can only be set in a \newenvironment
+% \setlength{\topsep}{0pt}
+% \setlength{\partopsep}{0pt}
+% \setlength{\parsep}{3pt}
+% \setlength{\itemsep}{3pt}
+% \renewcommand{\baselinestretch}{1.5}
+% \setlength{\leftmargin}{}
+% \setlength{\rightmargin}{}
+% \setlength{\listparindent}{}
+% \setlength{\labelwidth}{}
+% \setlength{\labelsep}{}
+% \setlength{\itemindent}{}
+
+% \setlength{\footrulewidth}{.4pt}
+\renewcommand{\footrulewidth}{.4pt}
+
+% \pagestyle{empty}
+\pagestyle{fancy}
+
+\lhead[even]{\footnotesize (267) 882-7777}
+\chead[even]{\footnotesize\textbf{John Kirk}}
+\rhead[even]{\footnotesize $<$johnnkirk@gmail.com$>$}
+\lfoot[even]{\footnotesize July 20, 2014}
+\cfoot[even]{\footnotesize John Kirk}
+\rfoot[even]{\textbf{\small Page \thepage\ of 3}}
+
+% \newfont{dunmagele}{cmdunh10 scaled 7430}
+% \newfont{dunmagten}{cmdunh10 scaled 6191}
+% \newfont{dunmagnin}{cmdunh10 scaled 5160}
+% \newfont{dunmageig}{cmdunh10 scaled 4300}
+% \newfont{dunmagsev}{cmdunh10 scaled 3583}
+% \newfont{dunmagsix}{cmdunh10 scaled 2986}
+% \newfont{dunmagfiv}{cmdunh10 scaled 2488}
+% \newfont{dunmagfou}{cmdunh10 scaled 2074)
+
+\newenvironment{items}{\begin{list}{$\circ$}{%
+  \setlength{\itemsep}{0ex}
+  \setlength{parsep}{0ex}
+  \setlength{topsep}{-ex}
+  }}{\end{list}}
+
+\newenvironment{itemlist}{\begin{list}{$\bullet$}{
+  % these can only be set in a \newenvironment
+  \setlength{\topsep}{2pt}
+  \setlength{\partopsep}{0pt}
+  \setlength{\parsep}{4pt}
+  \setlength{\itemsep}{0pt}
+  \setlength{\leftmargin}{20pt}
+  % \setlength{\rightmargin}{0pt}
+  \setlength{\listparindent}{8pt}
+  % \setlength{\labelwidth}{0pt}
+  % \setlength{\labelsep}{0pt}
+  % \setlength{\itemindent}{0pt}
+  }}{\end{list}}
+
+\newcommand{\subhead}[1]{{\setlength{\parindent}{0pt}
+                          \bigskip\textbf{#1}\par}}
+
+\newcommand{\subfoot}[1]{{\setlength{\parindent}{0pt}
+                          \medskip\footnotesize\textbf{#1}\par}}
+
+\begin{document}
+\vspace*{-0.75in}
+\centerline{\bfseries\Large Derivation for Double-Layer Tensegrity Structures}
+\bigskip
+\bigskip
+% \hfill\begin{minipage}{2in}\normalsize
+% John Kirk\\
+% % Dystan Hays Studios\\
+% 3579 E Foothill Bl. \#246\\
+% Pasadena,\quad CA\quad  91107\\
+% \\
+% June 30, 2014\\
+% \end{minipage}
+% 
+
+  I hypothesize that a double-layer (and, thus, trusswork) tensegrity sphere can be
+constructed by using two of the spheres I've usually studied -- of different diameters
+-- nested concentrically.
+
+  My goal in the current project is to derive useful characterizations of each of the
+important aspects of the form I identify as based on the tetrahedron.  A later goal
+will be to implement animated computer visualizations of this class of structures and,
+subsequently, to build physical examples of these structures in the real world, for
+testing of their features and methods of fabricating them.
+
+  Eventually, doing the same exercise for the octahedral and icosahedral forms will
+be valuable.  The final goal is to devise how to build structures similarly that
+derive from multi-frequency subdivision of the icosahedral form, so that practical
+real-world structures can be manufactured from exhaustively complete specifications,
+and that such structures can be designed and their real-world performance thoroughly
+analyzed in simulation.
+
+  The two simpler tensegrities, from which the current exercise will compose a result,
+must be of opposite rotation directions, and the struts from each must be moved to
+positions that connect the inner with the outer and then each strut will need two
+additional cables which, also, will connect the inner to the outer layers.
+
+  The rotation directions I speak about above can be understood via a crucial
+observation about the spherical tensegrity spheres I've usually studied (they can be
+six-strut, twelve-strut, and thirty-strut, corresponding to tetrahedral, octahedral,
+or icosahedral symmetries, respectively, to be spherically omni-symmetrical).  This
+observation is that the function of the struts (or axial-compression members) can be
+thought of as stretching as far as possible one of the two diagonals of the
+quadrilateral corresponding to the strut in the cable net of the tensegrity structure.
+
+  If the cable network is kept taught and the structure is moved from a position where
+those quadrilaterals have one diagonal maximized, to a position where the opposite
+diagonal is maximized, the centers of the large and small triangles can be held fixed
+and the triangles can be seen to rotate in opposite directions about each of their
+centers, as they move closer or farther from the center of the sphere. The geometry
+of the whole constrains the quadrilateral shape to adjust no farther than a fixed
+maximum length for each quadrilateral diagonal.  When the net is in one of the two
+possible tensegrity positions, the cables will be held taught as well so, in that
+position, no additional constraint is necessary but the presence of the correct-length
+strut, to maintain structural integrity.
+
+  The current exercise, focusing on the tetrahedral symmetry (the simplest, to start),
+will be comprised of twelve struts and seventy-two cables in the final structure but,
+due to symmetry, will have far fewer distinct lengths.  There will be four large and
+four small triangles of cable in each of the two spherical layers (4*2*3*2=48 cables,
+of four different lengths), two different lengths of inter-layer cables for each of four
+large triangles (2*4*3=24 cables of two lengths), and three identical strut lengths for
+each of four large triangles (3*4=12 struts of a single length).  Thus there will be
+twelve identical cables of each of six lengths, and twelve struts of a single length.
+
+  I will begin with the inner differing by 20\% in diameter from the outer six-strut
+dual-bridle cable net.  I will also plan on the shorter cable to be 20\% of the length
+of the longer.  Each of the four large triangles of each concentric sphere will have
+three struts connecting it to the corresponding large triangle of the other sphere, and
+the additional cables making that component a three-strut tensegrity in its own right.
+These four three-strut tensegrity structures will be connected to the others to form
+the final structure, requiring addition of the cables comprising the small triangles of
+each concentric spherical tensegrity -- but not the twelve struts those structures
+would need if they were to have structural integrity independently.  The inner and
+outer sets of these cables are thought to counter opposite degrees of freedom of
+twisting of the large triangles of the inner and outer tensegrity nets.
+
+  The first step will be to write specifications of a three-strut tensegrity to be used
+four times in the scenario described above.
+
+  It will have cylindrical symmetry, so the inner and outer large triangles will be
+equilateral, and be twisted with respect to each other by an angle of from 120 degrees
+to 180 degrees.  I'll begin by assuming that 150 degrees will work.  The distance from
+the inner to the outer triangle will be 20\% of the radius of the outer size of the
+eventual structure.  Ultimately, it will be useful to have a derivation that allows this
+twist angle to vary between the limits.
+
+  Each strut-end, in addition to the two cables of the triangle to which it is connected,
+will have two more cables connecting it to the strut ends of the other two struts in the
+opposite triangle.  This will result in twelve cables in all connecting the three struts.
+
+  I will choose the distance from the center of the outer large triangle to a vertex
+to be two units, and assign parameters to any remaining undetermined distances, so as
+to allow derivation of all distances and geometry but the ones intentionally left to be
+assigned freely.  This assignment allows the eventual results to be parameterized by
+assigning this two-unit scale factor any real-world value.
+
+  These assumptions will allow writing immediately the cartesian coordinates of the six
+points where cable end-points connect to strut end-points, given a choice of convenient
+positioning of the structure in the coordinate system.
+
+  I will choose the outer large triangle to have vertices in the $x$-$y$ plane of a 3D
+cartesian coordinate system, where one vertex is at $[0,-2,0]$ and its center is at the
+origin.
+
+  This implies that the other two vertices will be at $[\sqrt{3},1,0]$ and $[-\sqrt{3},1,0]$.
+
+  Next, we will identify coordinates for the inner large triangle.  It would be satisfying
+to parameterize its size (and, thus its distance from the outer large triangle and from
+the center of the eventual double-layer structure) as a fraction, but that seems complicated
+and not crucial for the current derivation.
+
+  I'll choose 1 as the $z$ coordinate for all three vertices.  For the purpose of deriving
+formulas for the current three-strut tensegrity, this will be adequate.  When we wish to
+compose four of these structures to result in the desired double-layer structure this
+dimension, taken as a fraction of the distance of the large triangle from the center of
+the complete structure, should be the same as the fraction that the smaller triangle is of
+the larger triangle.  Assuming the 150-degree rotation described above, the vertex of this
+second (inner) triangle corresponding to the first vertex specified above for the outer
+triangle will then have an $x$ coordinate of $-.8$ and a $y$-coordinate of $\sqrt{3}$.  The
+next corresponding vertex will be at $[2,0]$ and the third will be at $[-.8,-\sqrt{3}]$. 
+The final results, in tabular form are:
+
+\begin{tabular}{lrrrrlrrrrlrrrr}
+  \multicolumn{5}{c}{(first strut)}  &
+  \multicolumn{5}{c}{(second strut)} & 
+  \multicolumn{5}{c}{(third strut)}                \\[0.5ex]
+  $[$ & $        0,$ & $       -2,$ & $0$ & $]$ &
+  $[$ & $ \sqrt{3},$ & $        1,$ & $0$ & $]$ &
+  $[$ & $-\sqrt{3},$ & $        1,$ & $0$ & $]$    \\
+  $[$ & $      -.8,$ & $ \sqrt{3},$ & $1$ & $]$ &
+  $[$ & $        2,$ & $        0,$ & $1$ & $]$ &
+  $[$ & $      -.8,$ & $-\sqrt{3},$ & $1$ & $]$    \end{tabular}
+
+  The columns in the table show end-points of the three struts, and the rows show the
+vertices of the outer triangle above those for the inner.
+
+  Next, it will be convenient to derive formulas for the lengths of the struts and the
+cables.  After that, formulas for angles between struts and cables.  Symmetry implies
+there will be a single length for all three struts, four possibly distinct cable lengths
+and eight possibly distinct angles.  We won't need to characterize all angles between
+cables emanating from the same vertex until such time as design of the fixtures that
+facilitate connection of cables to struts is done.
+
+  The six 3D points shown in the table are sufficient for generating a computer model
+of the completed three-strut tensegrity for purposes of visualization.
+
+  A final step for this component model is to derive formulas for the force equilibrium
+of the tension and compression members of the structure.  It will be sufficient to make
+this derivation for each end of a single strut.  The rest are determined by symmetry.
+A key goal, here, is to verify that the configuration specified above achieves this force
+equilibrium.  If we specify an arbitrary compression force borne by a strut, we hope to
+deduce the consequent tension forces on all cables, under equilibrium conditions.
+
+  To do that, we can observe that there are four cables attached to each end of the
+typical strut.  If we choose four pairs of these eight cables appropriately, by symmetry,
+each pair should be bearing the same tension force, calculated by distributing the
+compression force from the strut to the cables via the angles the cables make with
+respect to the strut.  In addition, the components that are perpendicular to the strut,
+of the tension forces induced into the four cables connected to each strut end, should
+add up to the zero vector.
+
+\bigskip
+\strut\vspace{0.75in}\hspace{0.5in} --- John Kirk
+\end{document}
