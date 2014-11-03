@@ -4,7 +4,7 @@ icosamap-generator
 An early implementation of Bucky Fuller's icosahedral projection of the world map
 
 During the year of 1970 at UCLA, John Kirk wrote a FORTRAN program to plot to paper
-the world map coastlines indicated by a publically available CIA-published database
+the world map coastlines indicated by a publicly available CIA-published database
 of data points using a CalComp pen plotter via Richard Buckminster Fuller's projection
 of latitude/longitude coordinates onto an icosahedral shape.
 
